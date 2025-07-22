@@ -964,7 +964,7 @@ getdecls()
 		tk = nexttk();
 		if (tk!=TLBrack)
 			die("syntax error, { expected after %union");
-		fprintf(fout, "#line %d \"%s\"\n", lineno, srca);
+		//fprintf(fout, "#line %d \"%s\"\n", lineno, srca);
 		s = cpycode();
 		fprintf(fout, "typedef union %s yyunion;\n", s);
 		fprintf(fout, "#define YYSTYPE yyunion\n");
@@ -1030,7 +1030,7 @@ getdecls()
 		}
 		break;
 	case TLL:
-		fprintf(fout, "#line %d \"%s\"\n", lineno, srca);
+		//fprintf(fout, "#line %d \"%s\"\n", lineno, srca);
 		for (;;) {
 			c = fgetc(fin);
 			if (c == EOF)
@@ -1215,13 +1215,13 @@ codeout()
 	for (n=0; n<nrl; n++) {
 		fprintf(fout, "\tcase %d:\n", n);
 		r = &rs[n];
-		fprintf(fout, "#line %d \"%s\"\n", r->actln, srca);
+		//fprintf(fout, "#line %d \"%s\"\n", r->actln, srca);
 		actout(r);
 		fputs("\t\tbreak;\n", fout);
 	}
 	for (p=code1; *p; p++)
 		fputs(*p, fout);
-	fprintf(fout, "#line %d \"%s\"\n", lineno, srca);
+	//fprintf(fout, "#line %d \"%s\"\n", lineno, srca);
 	while ((c=fgetc(fin))!=EOF)
 		fputc(c, fout);
 }

@@ -1,4 +1,4 @@
-%{
+
 
 #include <ctype.h>
 #include <stdio.h>
@@ -740,77 +740,471 @@ mkfor(Node *ini, Node *tst, Node *inc, Stmt *s)
         return s2;
 }
 
-%}
 
-%union {
+typedef union {
     Node *n;
     Stmt *s;
     unsigned u;
-}
-
-%token <n> NUM
-%token <n> STR
-%token <n> IDENT
-%token PP MM LE GE SIZEOF
-
-%token TVOID TINT TFLOAT TLNG
-%token IF ELSE WHILE FOR BREAK RETURN
-
-%right '='
-%left OR
-%left AND
-%left '&'
-%left EQ NE
-%left '<' '>' LE GE
-%left '+' '-'
-%left '*' '/' '%'
-
-%type <u> type
-%type <s> stmt stmts
-%type <n> expr exp0 pref post arg0 arg1 par0 par1
-
-%%
-
-prog: func prog | fdcl prog | idcl prog | ;
-
-fdcl: type IDENT '(' ')' ';'
-{
-    varadd($2->u.v, 1, FUNC($1));
+} yyunion;
+#define YYSTYPE yyunion
+short yyini = 0;
+short yyntoks = 40;
+short yyr1[] = {
+   2,   2,   1,   1,   1,   1,   1,   3,   2,   3,
+   2,   5,   7,   5,   9,   2,   0,   1,   3,   3,
+   3,   3,   3,   3,   3,   3,   3,   3,   3,   3,
+   3,   3,   3,   1,   0,   1,   2,   2,   2,   1,
+   1,   1,   4,   3,   4,   4,   2,   2,   1,   0,
+   1,   3,   1,   0,   4,   2,   2,   2,   2,   0,
+   6,   5,   3,   0,   4,   0,   4
+};
+short yyr2[] = {
+   0,   1,   1,   1,   1,   1,   2,   2,   2,   2,
+   2,   2,   2,   2,   2,   3,   3,   4,   4,   4,
+   4,   4,   4,   4,   4,   4,   4,   4,   4,   4,
+   4,   4,   4,   5,   5,   6,   6,   6,   6,   7,
+   7,   7,   7,   7,   7,   7,   7,   7,   8,   8,
+   9,   9,  10,  10,  11,  11,  12,  12,  12,  12,
+  13,  14,  15,  16,  17,  18,  18
+};
+short yyadef[] = {
+  59,  -1,   0,  -1,  -1,  -1,  -1,   1,   2,   3,
+   4,   5,   6,  16,  -1,   7,  -1,   8,  -1,  -1,
+   9,  -1,  10,  -1,  -1,  -1,  -1,  11,  -1,  -1,
+  -1,  -1,  13,  -1,  12,  -1,  34,  -1,  34,  -1,
+  34,  -1,  -1,  14,  -1,  15,  17,  18,  19,  20,
+  21,  22,  23,  24,  25,  26,  27,  28,  29,  30,
+  31,  32,  33,  -1,  -1,  50,  -1,  -1,  -1,  -1,
+  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+  -1,  35,  -1,  36,  -1,  37,  -1,  38,  39,  40,
+  41,  -1,  -1,  42,  -1,  43,  49,  -1,  44,  -1,
+  45,  46,  47,  48,  -1,  51,  52,  55,  -1,  54,
+  59,  56,  59,  57,  59,  58,  -1,  -1,  65,  16,
+  60,  -1,  -1,  -1,  61,  62,  -1,  53,  -1,  64,
+  -1,  66
+};
+short yygdef[] = {
+  -1,   5,  45,  14,  21,  37,  46,  81,  97, 103,
+ 128, 109,   1, 110, 112, 114, 116, 117, 119
+};
+short yyadsp[] = {
+ 102,  11, -40, -11,  29,  58, 131, -40, -40, -40,
+ -40, -40, -40, -40,  -1, -40, -15, -40, 107,  17,
+ -40,  43, -40, -19, 107,  69, 233, -40, -12, 107,
+  97, 233,  12, 233, -40,  -7, 107,  -5, 107,  -4,
+ 107,  24, 233, -40, 130, -40, -40, 250, -21, -21,
+ -40, -40, -40,  25,  25,  25,  25,  53,  53, 312,
+ 286, 276, 250, 148, 176, 202, 107, 107, 107, 107,
+ 107, 107, 107, 107, 107, 107, 107, 107, 107, 107,
+ 107, 146, 107, -40, 107, -40, 107, -40, -40, -40,
+  54,  74,  -6, -40, 107, -40, 107,  52, -40, 107,
+ -40, -40, -40, -40, 107, -40, -40,  64,  -6, -40,
+ 102, -40, 102, -40, 102, -40, 104, 106, -40,  -6,
+ -40, 108, 111, 103, -40, -40, 117,  -6, 120, -40,
+ 122, -40
+};
+short yygdsp[] = {
+-132, 238, 211,  38, 326, 123, 103,-132,-132,  76,
+-132,  64,  76,-132,-132,-132,-132,-132,-132
+};
+short yyact[] = {
+  88,  89,  90,  11,   8,  10,   9,  91,  69,  70,
+  71,   2,  28,  24,  23,  35,  16,  18,   7,  17,
+  29,  86,  93,  74,  75,  36,  33,  82,  84,  38,
+  40,  94, 107,  12,  13,  15,  66,  80,  79,  78,
+  76,  77,  72,  73,  67,  68,  69,  70,  71,  74,
+  75,  20,  67,  68,  69,  70,  71,  42,   7,  74,
+  75, 121,  66,  80,  79,  78,  76,  77,  72,  73,
+  67,  68,  69,  70,  71,  74,  75,  22,  72,  73,
+  67,  68,  69,  70,  71,  98,  96,   7,  66,  80,
+  79,  78,  76,  77,  72,  73,  67,  68,  69,  70,
+  71, 108,  26,  74,  75, -65,  92, 126,  88,  89,
+  90,  11,   8,  10,   9,  91,  66,  80,  79,  78,
+  76,  77,  72,  73,  67,  68,  69,  70,  71,  86,
+  31,  88,  89,  90, 130,  82,  84, 124,  91,  94,
+ 122, 118, 125,  28, 123,  23,  35,  16,  18, 127,
+ 101, 102,  86, 129,  74,  75, 131,  44,  82,  84,
+   7,  39,  94,  41,  12,  13, 120,  66,  80,  79,
+  78,  76,  77,  72,  73,  67,  68,  69,  70,  71,
+ 105,  95,  74,  75,  99,  83, 111,  85, 113,  87,
+ 115, 106,  -1,  -1,  -1,  66,  80,  79,  78,  76,
+  77,  72,  73,  67,  68,  69,  70,  71,  74,  75,
+  -1,  -1,  -1,  -1,  -1, 100,  -1,  -1,  -1,  -1,
+  -1,  66,  80,  79,  78,  76,  77,  72,  73,  67,
+  68,  69,  70,  71,  88,  89,  90,  27,  -1, 104,
+  -1,  91,  32,  -1,  34,  -1,  28,  -1,  23,  35,
+  16,  18,  -1,  43,  -1,  86,  74,  75,  -1,  -1,
+  -1,  82,  84,  -1,  -1,  94,  -1,  12,  13,  66,
+  80,  79,  78,  76,  77,  72,  73,  67,  68,  69,
+  70,  71,  74,  75,  -1,  -1,  -1,  -1,  -1,  -1,
+  -1,  -1,  74,  75,  -1,  -1,  -1,  79,  78,  76,
+  77,  72,  73,  67,  68,  69,  70,  71,  78,  76,
+  77,  72,  73,  67,  68,  69,  70,  71,  74,  75,
+  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+   3,  -1,  -1,  -1,  -1,  76,  77,  72,  73,  67,
+  68,  69,  70,  71,  19,  -1,   4,  -1,  -1,  -1,
+  25,  -1,  -1,  -1,  -1,  30,  -1,   6,  -1,  -1,
+  -1,  -1,  62,  -1,  62,   4,  62,  -1,  -1,  -1,
+  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+  -1,  -1,  47,  48,  49,  50,  51,  52,  53,  54,
+  55,  56,  57,  58,  59,  60,  61,  -1,  -1,  -1,
+  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+  63,  -1,  65,  -1,  -1,  64,  -1,  -1,  -1,  -1,
+  65
+};
+short yychk[] = {
+   1,   2,   3,   9,  10,  11,  12,   8,  29,  30,
+  31,   0,  13,  32,  15,  16,  17,  18,  29,  34,
+  32,  22,  33,   6,   7,  32,  14,  28,  29,  34,
+  34,  32,   3,  34,  35,  36,  19,  20,  21,  22,
+  23,  24,  25,  26,  27,  28,  29,  30,  31,   6,
+   7,  34,  27,  28,  29,  30,  31,  33,  29,   6,
+   7,   3,  19,  20,  21,  22,  23,  24,  25,  26,
+  27,  28,  29,  30,  31,   6,   7,  34,  25,  26,
+  27,  28,  29,  30,  31,  33,  32,  29,  19,  20,
+  21,  22,  23,  24,  25,  26,  27,  28,  29,  30,
+  31,  37,  33,   6,   7,   3,  32,   3,   1,   2,
+   3,   9,  10,  11,  12,   8,  19,  20,  21,  22,
+  23,  24,  25,  26,  27,  28,  29,  30,  31,  22,
+  33,   1,   2,   3,   3,  28,  29,  34,   8,  32,
+  32,  35,  34,  13,  33,  15,  16,  17,  18,  32,
+   4,   5,  22,  33,   6,   7,  34,  43,  28,  29,
+  29,  45,  32,  45,  34,  35,  36,  19,  20,  21,
+  22,  23,  24,  25,  26,  27,  28,  29,  30,  31,
+  49,  33,   6,   7,  38,  46,  52,  46,  52,  46,
+  52,  51,  -1,  -1,  -1,  19,  20,  21,  22,  23,
+  24,  25,  26,  27,  28,  29,  30,  31,   6,   7,
+  -1,  -1,  -1,  -1,  -1,  39,  -1,  -1,  -1,  -1,
+  -1,  19,  20,  21,  22,  23,  24,  25,  26,  27,
+  28,  29,  30,  31,   1,   2,   3,  42,  -1,  37,
+  -1,   8,  42,  -1,  42,  -1,  13,  -1,  15,  16,
+  17,  18,  -1,  42,  -1,  22,   6,   7,  -1,  -1,
+  -1,  28,  29,  -1,  -1,  32,  -1,  34,  35,  19,
+  20,  21,  22,  23,  24,  25,  26,  27,  28,  29,
+  30,  31,   6,   7,  -1,  -1,  -1,  -1,  -1,  -1,
+  -1,  -1,   6,   7,  -1,  -1,  -1,  21,  22,  23,
+  24,  25,  26,  27,  28,  29,  30,  31,  22,  23,
+  24,  25,  26,  27,  28,  29,  30,  31,   6,   7,
+  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+  41,  -1,  -1,  -1,  -1,  23,  24,  25,  26,  27,
+  28,  29,  30,  31,  44,  -1,  41,  -1,  -1,  -1,
+  44,  -1,  -1,  -1,  -1,  44,  -1,  41,  -1,  -1,
+  -1,  -1,  44,  -1,  44,  41,  44,  -1,  -1,  -1,
+  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+  -1,  -1,  44,  44,  44,  44,  44,  44,  44,  44,
+  44,  44,  44,  44,  44,  44,  44,  -1,  -1,  -1,
+  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+  44,  -1,  44,  -1,  -1,  44,  -1,  -1,  -1,  -1,
+  44
+};
+#define NUM 128
+#define STR 129
+#define IDENT 130
+#define PP 131
+#define MM 132
+#define LE 133
+#define GE 134
+#define SIZEOF 135
+#define TVOID 136
+#define TINT 137
+#define TFLOAT 138
+#define TLNG 139
+#define IF 140
+#define ELSE 141
+#define WHILE 142
+#define FOR 143
+#define BREAK 144
+#define RETURN 145
+#define OR 146
+#define AND 147
+#define EQ 148
+#define NE 149
+short yytrns[] = {
+   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+   0,   0,   0,   0,   0,   0,   0,  31,  22,   0,
+  32,  33,  29,  27,  37,  28,   0,  30,   0,   0,
+   0,   0,   0,   0,   0,   0,   0,   0,   0,  34,
+  25,  19,  26,   0,   0,   0,   0,   0,   0,   0,
+   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+   0,  38,   0,  39,   0,   0,   0,   0,   0,   0,
+   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+   0,   0,   0,  35,   0,  36,   0,   0,   1,   2,
+   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,
+  13,  14,  15,  16,  17,  18,  20,  21,  23,  24
 };
 
-idcl: type IDENT ';'
+#ifndef YYSTYPE
+#define YYSTYPE int
+#endif
+YYSTYPE yylval;
+
+int
+yyparse()
 {
-    if ($1 == NIL)
+	enum {
+		StackSize = 100,
+		ActSz = sizeof yyact / sizeof yyact[0],
+	};
+	struct {
+		YYSTYPE val;
+		int state;
+	} stk[StackSize], *ps;
+	int r, h, n, s, tk;
+	YYSTYPE yyval;
+
+	ps = stk;
+	ps->state = s = yyini;
+	tk = -1;
+loop:
+	n = yyadsp[s];
+	if (tk < 0 && n > -yyntoks)
+		tk = yytrns[yylex()];
+	n += tk;
+	if (n < 0 || n >= ActSz || yychk[n] != tk) {
+		r = yyadef[s];
+		if (r < 0)
+			return -1;
+		goto reduce;
+	}
+	n = yyact[n];
+	if (n == -1)
+		return -1;
+	if (n < 0) {
+		r = - (n+2);
+		goto reduce;
+	}
+	tk = -1;
+	yyval = yylval;
+stack:
+	ps++;
+	if (ps-stk >= StackSize)
+		return -2;
+	s = n;
+	ps->state = s;
+	ps->val = yyval;
+	goto loop;
+reduce:
+	ps -= yyr1[r];
+	h = yyr2[r];
+	s = ps->state;
+	n = yygdsp[h] + s;
+	if (n < 0 || n >= ActSz || yychk[n] != yyntoks+h)
+		n = yygdef[h];
+	else
+		n = yyact[n];
+	switch (r) {
+	case 0:
+		yyval = ps[1].val; return 0;
+		break;
+	case 1:
+{ yyval.u = IDIR(ps[1].val.u); }
+		break;
+	case 2:
+{ yyval.u = INT; }
+		break;
+	case 3:
+{ yyval.u = LNG; }
+		break;
+	case 4:
+{ yyval.u = FLOAT; }
+		break;
+	case 5:
+{ yyval.u = NIL; }
+		break;
+	case 6:
+{ yyval.s = 0; }
+		break;
+	case 7:
+{ yyval.s = ps[2].val.s; }
+		break;
+	case 8:
+{ yyval.s = mkstmt(Break, 0, 0, 0); }
+		break;
+	case 9:
+{ yyval.s = mkstmt(Ret, ps[2].val.n, 0, 0); }
+		break;
+	case 10:
+{ yyval.s = mkstmt(Expr, ps[1].val.n, 0, 0); }
+		break;
+	case 11:
+{ yyval.s = mkstmt(While, ps[3].val.n, ps[5].val.s, 0); }
+		break;
+	case 12:
+{ yyval.s = mkstmt(If, ps[3].val.n, ps[5].val.s, ps[7].val.s); }
+		break;
+	case 13:
+{ yyval.s = mkstmt(If, ps[3].val.n, ps[5].val.s, 0); }
+		break;
+	case 14:
+{ yyval.s = mkfor(ps[3].val.n, ps[5].val.n, ps[7].val.n, ps[9].val.s); }
+		break;
+	case 15:
+{ yyval.s = mkstmt(Seq, ps[1].val.s, ps[2].val.s, 0); }
+		break;
+	case 16:
+{ yyval.s = 0; }
+		break;
+	case 17:
+		break;
+	case 18:
+{ yyval.n = mknode('=', ps[1].val.n, ps[3].val.n); }
+		break;
+	case 19:
+{ yyval.n = mknode('+', ps[1].val.n, ps[3].val.n); }
+		break;
+	case 20:
+{ yyval.n = mknode('-', ps[1].val.n, ps[3].val.n); }
+		break;
+	case 21:
+{ yyval.n = mknode('*', ps[1].val.n, ps[3].val.n); }
+		break;
+	case 22:
+{ yyval.n = mknode('/', ps[1].val.n, ps[3].val.n); }
+		break;
+	case 23:
+{ yyval.n = mknode('%', ps[1].val.n, ps[3].val.n); }
+		break;
+	case 24:
+{ yyval.n = mknode('<', ps[1].val.n, ps[3].val.n); }
+		break;
+	case 25:
+{ yyval.n = mknode('<', ps[3].val.n, ps[1].val.n); }
+		break;
+	case 26:
+{ yyval.n = mknode('l', ps[1].val.n, ps[3].val.n); }
+		break;
+	case 27:
+{ yyval.n = mknode('l', ps[3].val.n, ps[1].val.n); }
+		break;
+	case 28:
+{ yyval.n = mknode('e', ps[1].val.n, ps[3].val.n); }
+		break;
+	case 29:
+{ yyval.n = mknode('n', ps[1].val.n, ps[3].val.n); }
+		break;
+	case 30:
+{ yyval.n = mknode('&', ps[1].val.n, ps[3].val.n); }
+		break;
+	case 31:
+{ yyval.n = mknode('a', ps[1].val.n, ps[3].val.n); }
+		break;
+	case 32:
+{ yyval.n = mknode('o', ps[1].val.n, ps[3].val.n); }
+		break;
+	case 33:
+		break;
+	case 34:
+{ yyval.n = 0; }
+		break;
+	case 35:
+		break;
+	case 36:
+{ yyval.n = mkneg(ps[2].val.n); }
+		break;
+	case 37:
+{ yyval.n = mknode('@', ps[2].val.n, 0); }
+		break;
+	case 38:
+{ yyval.n = mknode('A', ps[2].val.n, 0); }
+		break;
+	case 39:
+		break;
+	case 40:
+		break;
+	case 41:
+		break;
+	case 42:
+{ yyval.n = mknode('N', 0, 0); yyval.n->u.n = SIZE(ps[3].val.u); }
+		break;
+	case 43:
+{ yyval.n = ps[2].val.n; }
+		break;
+	case 44:
+{ yyval.n = mknode('C', ps[1].val.n, ps[3].val.n); }
+		break;
+	case 45:
+{ yyval.n = mkidx(ps[1].val.n, ps[3].val.n); }
+		break;
+	case 46:
+{ yyval.n = mknode('P', ps[1].val.n, 0); }
+		break;
+	case 47:
+{ yyval.n = mknode('M', ps[1].val.n, 0); }
+		break;
+	case 48:
+		break;
+	case 49:
+{ yyval.n = 0; }
+		break;
+	case 50:
+{ yyval.n = mknode(0, ps[1].val.n, 0); }
+		break;
+	case 51:
+{ yyval.n = mknode(0, ps[1].val.n, ps[3].val.n); }
+		break;
+	case 52:
+		break;
+	case 53:
+{ yyval.n = 0; }
+		break;
+	case 54:
+{ yyval.n = param(ps[2].val.n->u.v, ps[1].val.u, ps[4].val.n); }
+		break;
+	case 55:
+{ yyval.n = param(ps[2].val.n->u.v, ps[1].val.u, 0); }
+		break;
+	case 56:
+		break;
+	case 57:
+		break;
+	case 58:
+		break;
+	case 59:
+		break;
+	case 60:
+{
+    if (!stmt(ps[5].val.s, -1))
+        fprintf(of, "\tret 0\n");
+    fprintf(of, "}\n\n");
+}
+		break;
+	case 61:
+{
+    varadd(ps[2].val.n->u.v, 1, FUNC(ps[1].val.u));
+}
+		break;
+	case 62:
+{
+    if (ps[1].val.u == NIL)
         die("invalid void declaration");
     if (nglo == NGlo)
         die("too many string literals");
     ini[nglo] = alloc(sizeof "{ x 0 }");
-    sprintf(ini[nglo], "{ %c 0 }", irtyp($1));
-    varadd($2->u.v, nglo++, $1);
-};
-
-init:
+    sprintf(ini[nglo], "{ %c 0 }", irtyp(ps[1].val.u));
+    varadd(ps[2].val.n->u.v, nglo++, ps[1].val.u);
+}
+		break;
+	case 63:
 {
     varclr();
     tmp = 0;
-};
-
-func: init prot '{' dcls stmts '}'
-{
-    if (!stmt($5, -1))
-        fprintf(of, "\tret 0\n");
-    fprintf(of, "}\n\n");
-};
-
-prot: IDENT '(' par0 ')'
+}
+		break;
+	case 64:
 {
     Symb *s;
     Node *n;
     int t, m;
 
-    varadd($1->u.v, 1, FUNC(INT));
-    fprintf(of, "export function w $%s(", $1->u.v);
-    n = $3;
+    varadd(ps[1].val.n->u.v, 1, FUNC(INT));
+    fprintf(of, "export function w $%s(", ps[1].val.n->u.v);
+    n = ps[3].val.n;
     if (n)
         for (;;) {
             s = varget(n->u.v);
@@ -824,106 +1218,34 @@ prot: IDENT '(' par0 ')'
         }
     fprintf(of, ") {\n");
     fprintf(of, "@l%d\n", lbl++);
-    for (t=0, n=$3; n; t++, n=n->r) {
+    for (t=0, n=ps[3].val.n; n; t++, n=n->r) {
         s = varget(n->u.v);
         m = SIZE(s->ctyp);
         fprintf(of, "\t%%%s =l alloc%d %d\n", n->u.v, m, m);
         fprintf(of, "\tstore%c %%t%d", irtyp(s->ctyp), t);
         fprintf(of, ", %%%s\n", n->u.v);
     }
-};
-
-par0: par1
-    |                     { $$ = 0; }
-    ;
-par1: type IDENT ',' par1 { $$ = param($2->u.v, $1, $4); }
-    | type IDENT          { $$ = param($2->u.v, $1, 0); }
-    ;
-
-
-dcls: | dcls type IDENT ';'
+}
+		break;
+	case 65:
+		break;
+	case 66:
 {
     int s;
     char *v;
 
-    if ($2 == NIL)
+    if (ps[2].val.u == NIL)
         die("invalid void declaration");
-    v = $3->u.v;
-    s = SIZE($2);
-    varadd(v, 0, $2);
+    v = ps[3].val.n->u.v;
+    s = SIZE(ps[2].val.u);
+    varadd(v, 0, ps[2].val.u);
     fprintf(of, "\t%%%s =l alloc%d %d\n", v, s, s);
-};
+}
+		break;
+	}
+	goto stack;
+}
 
-type: type '*' { $$ = IDIR($1); }
-    | TINT     { $$ = INT; }
-    | TLNG     { $$ = LNG; }
-    | TFLOAT   { $$ = FLOAT; }
-    | TVOID    { $$ = NIL; }
-    ;
-
-stmt: ';'                            { $$ = 0; }
-    | '{' stmts '}'                  { $$ = $2; }
-    | BREAK ';'                      { $$ = mkstmt(Break, 0, 0, 0); }
-    | RETURN expr ';'                { $$ = mkstmt(Ret, $2, 0, 0); }
-    | expr ';'                       { $$ = mkstmt(Expr, $1, 0, 0); }
-    | WHILE '(' expr ')' stmt        { $$ = mkstmt(While, $3, $5, 0); }
-    | IF '(' expr ')' stmt ELSE stmt { $$ = mkstmt(If, $3, $5, $7); }
-    | IF '(' expr ')' stmt           { $$ = mkstmt(If, $3, $5, 0); }
-    | FOR '(' exp0 ';' exp0 ';' exp0 ')' stmt
-                                     { $$ = mkfor($3, $5, $7, $9); }
-    ;
-
-stmts: stmts stmt { $$ = mkstmt(Seq, $1, $2, 0); }
-     |            { $$ = 0; }
-     ;
-
-expr: pref
-    | expr '=' expr     { $$ = mknode('=', $1, $3); }
-    | expr '+' expr     { $$ = mknode('+', $1, $3); }
-    | expr '-' expr     { $$ = mknode('-', $1, $3); }
-    | expr '*' expr     { $$ = mknode('*', $1, $3); }
-    | expr '/' expr     { $$ = mknode('/', $1, $3); }
-    | expr '%' expr     { $$ = mknode('%', $1, $3); }
-    | expr '<' expr     { $$ = mknode('<', $1, $3); }
-    | expr '>' expr     { $$ = mknode('<', $3, $1); }
-    | expr LE expr      { $$ = mknode('l', $1, $3); }
-    | expr GE expr      { $$ = mknode('l', $3, $1); }
-    | expr EQ expr      { $$ = mknode('e', $1, $3); }
-    | expr NE expr      { $$ = mknode('n', $1, $3); }
-    | expr '&' expr     { $$ = mknode('&', $1, $3); }
-    | expr AND expr     { $$ = mknode('a', $1, $3); }
-    | expr OR expr      { $$ = mknode('o', $1, $3); }
-    ;
-
-exp0: expr
-    |                   { $$ = 0; }
-    ;
-
-pref: post
-    | '-' pref          { $$ = mkneg($2); }
-    | '*' pref          { $$ = mknode('@', $2, 0); }
-    | '&' pref          { $$ = mknode('A', $2, 0); }
-    ;
-
-post: NUM
-    | STR
-    | IDENT
-    | SIZEOF '(' type ')' { $$ = mknode('N', 0, 0); $$->u.n = SIZE($3); }
-    | '(' expr ')'        { $$ = $2; }
-    | IDENT '(' arg0 ')'  { $$ = mknode('C', $1, $3); }
-    | post '[' expr ']'   { $$ = mkidx($1, $3); }
-    | post PP             { $$ = mknode('P', $1, 0); }
-    | post MM             { $$ = mknode('M', $1, 0); }
-    ;
-
-arg0: arg1
-    |               { $$ = 0; }
-    ;
-arg1: expr          { $$ = mknode(0, $1, 0); }
-    | expr ',' arg1 { $$ = mknode(0, $1, $3); }
-    ;
-
-%%
 
 int
 yylex()
