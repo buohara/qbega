@@ -1,7 +1,9 @@
-QBE - Backend Compiler              http://c9x.me/compile/
+QBEGA - Backend Compiler with C Frontend for Geometric Algebra Types
+
+Fork of the original QBE backend compiler. See http://c9x.me/compile/
 
 doc/    Documentation.
-minic/  An example C frontend for QBE.
+minic/  An example C frontend with GA types for QBE.
 tools/  Miscellaneous tools (testing).
 test/   Tests.
 amd64/
