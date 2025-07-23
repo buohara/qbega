@@ -1,5 +1,7 @@
 QBEGA - Backend Compiler with C Frontend for Geometric Algebra Types
 
+**WORK IN PROGRESS**
+
 Fork of the original QBE backend compiler. See http://c9x.me/compile/
 
 doc/    Documentation.
